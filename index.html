@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+        <meta name="description" content="" />
+        <meta name="author" content="" />
+        <title>Mathinmaps</title>
+        <link rel="icon" type="image/x-icon" href="assets/img/Logo-trans.png" />
+        <!-- Font Awesome icons (free version)-->
+        <script src="https://use.fontawesome.com/releases/v5.15.4/js/all.js" crossorigin="anonymous"></script>
+        <!-- Google fonts-->
+        <link href="https://fonts.googleapis.com/css?family=Saira+Extra+Condensed:500,700" rel="stylesheet" type="text/css" />
+        <link href="https://fonts.googleapis.com/css?family=Muli:400,400i,800,800i" rel="stylesheet" type="text/css" />
+        <!-- Core theme CSS (includes Bootstrap)-->
+        <link href="css/bootstrap.css" rel="stylesheet"/>
+
+        <link href="css/w3.css" rel="stylesheet"/>
+        <link href="https://api.mapbox.com/mapbox-gl-js/v2.7.0/mapbox-gl.css" rel="stylesheet">
+        <script src="https://api.mapbox.com/mapbox-gl-js/v2.7.0/mapbox-gl.js"></script>
+        <style>
+            html{
+            height: 100%;
+            }
+        body { margin: 0; padding: 0; min-height: 100%;}
+        /* #map { position: absolute; top: 0; bottom: 0; width: 100%; } */
+        #map-container {
+            position: relative;
+            height: 180px;
+            width: 600px;
+        }
+
+        #map {
+            position: relative;
+            height: inherit;
+            width: inherit;
+        }
+        </style>
+    </head>
+    <body>
+        
+        <!-- Load the `mapbox-gl-geocoder` plugin. -->
+        <script src="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v4.7.2/mapbox-gl-geocoder.min.js"></script>
+        <link rel="stylesheet" href="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v4.7.2/mapbox-gl-geocoder.css" type="text/css">
+        <!-- Navigation-->
+        
+        <div class="w3-sidebar w3-bar-block w3-card w3-animate-left" style="display:none;width:40%;" id="leftMenu">
+            <button onclick="closeLeftMenu()" class="w3-bar-item w3-button w3-large">Close &times;</button>
+            
+            <div class="w3-card margin-5">
+                <img src="assets/img/DSC06755.JPG" style="width:100%;">
+                <div class="w3-card w3-centered" style="align-content: center; margin: 1%;">
+                <h1>Title</h1>
+                <div class="w3-car">
+                    <p>This is the objective of the task. you need to read carefully to solve the task</p>
+                </div>
+                </div>
+                <div class="w3-card center-item" style="align-items: center;">
+                <h2>Steps</h2>
+                <div class="btn-group">
+                    <button type="button" class="btn btn-primary" onclick="pindah(1);">1</button>
+                    <button type="button" class="btn btn-primary" onclick="pindah(2);">2</button>
+                    <button type="button" class="btn btn-primary" onclick="pindah(3);">3</button>
+                    <button type="button" class="btn btn-primary" onclick="pindah(4);">4</button>
+                  </div>
+                  <p id="pertanyaan">Apa Informasi yang anda peroleh dari masalah di samping? Tulis secara rincian dan tulis semua daftar pertanyaan yang dapat dibuat berdasarkan masalah disamping</p>
+                  <div class="form-group">
+                      <label for="comment">Tulis dibawah ini:</label>
+                      <iframe src="https://kami.app/eCz-ZWC-ZAt-681" width="100%" height="720px" title="description"></iframe>
+                      <div id="keterangan" style="height: 50px;"></div>
+                    </div>
+                    
+                </div>
+            </div>
+
+            </div>
+          
+          <div class="w3-sidebar w3-bar-block w3-card w3-animate-right" style="display:none;right:0;width:40%;" id="rightMenu">
+            <button onclick="closeRightMenu()" class="w3-bar-item w3-button w3-large">Close &times;</button>
+            <iframe src="https://app-edu.assemblrworld.com/creation/-MufOXxggYs8s-IYX4cS?utm_campaign=shortenurl&utm_medium=share+creation+dialog&utm_source=webapp" style="width: 100%;height:720px;" title="description"></iframe>
+            <div style="height:50px;"></div>
+          </div>
+          
+          <div class="w3-teal">
+            <button class="w3-button w3-teal w3-xlarge w3-left" onclick="openLeftMenu()">&#9776;</button>
+            <button class="w3-button w3-teal w3-xlarge w3-right" onclick="openRightMenu()">&#9776;</button>
+            <div class="w3-teal w3-xlarge w3-centered" style="padding: 1px 16px;">
+                <h1 style="text-align: center;">Mathinmaps</h1>
+            </div>
+        </div>
+
+          <div id="map" style="width: 100%; height: 720px;"></div>
+     
+        <!-- Bootstrap core JS-->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+        <!-- Core theme JS-->
+        
+        <script>
+            mapboxgl.accessToken = 'pk.eyJ1IjoiZ2hvemlhbjA4NCIsImEiOiJjanBpM21iMmYxMzZ5M2tvdTk0bnZneWN5In0.Y2KXwzsCbl2YvAjZW47r2Q';
+        const map = new mapboxgl.Map({
+        container: 'map', // container ID
+        style: 'mapbox://styles/mapbox/streets-v11', // style URL
+        center: [110.3616249, -7.0595488], // starting position [lng, lat]
+        zoom: 17 // starting zoom
+        });
+        // Resize the map when the map container is shown
+        // after being initially hidden with CSS.
+        const mapDiv = document.getElementById('map');
+            if (mapDiv.style.visibility === true) map.resize();
+
+        // Add the control to the map.
+        map.addControl(
+            new MapboxGeocoder({
+                accessToken: mapboxgl.accessToken,
+                mapboxgl: mapboxgl
+            })
+        );
+        map.addControl(new mapboxgl.NavigationControl());
+
+        map.on('resize', () => {
+            console.log('A resize event occurred.');
+        });
+
+        map.on('load', () => {
+                    //Add Line
+        map.addSource('route', {
+            'type': 'geojson',
+            'data': {
+                'type': 'Feature',
+                'properties': {},
+                'geometry': {
+                    'type': 'LineString',
+                    'coordinates': [
+                    [110.36038, -7.05929],
+                    [110.36160, -7.05968],
+                    [110.36163, -7.06032],
+                    [110.36189, -7.06020],
+                    [110.36280, -7.06008],
+                    [110.36280, -7.05971],
+                    [110.36256, -7.05961],
+                    [110.36255, -7.05977],
+                    [110.36194, -7.05976]
+                        ]
+                    }
+                }
+            });
+        map.addLayer({
+            'id': 'route',
+            'type': 'line',
+            'source': 'route',
+            'layout': {
+            'line-join': 'round',
+            'line-cap': 'round'
+                },
+                'paint': {
+                'line-color': '#888',
+                'line-width': 4
+                }
+        });
+
+        map.addSource('places', {
+            'type': 'geojson',
+            'data': {
+                'type': 'FeatureCollection',
+                'features': [
+                    {
+                        'type': 'Feature',
+                        'properties': {
+                            'name':'1',
+                            'description':
+                                '<strong>SMP-SMA Semesta BBS Sign</strong><p>Make it Mount Pleasant is a handmade and vintage market and afternoon of live entertainment and kids activities. 12:00-6:00 p.m.</p>'
+                        },
+                        'geometry': {
+                            'type': 'Point',
+                            'coordinates': [110.36038, -7.05929]
+                        }
+                    },
+                    {
+                        'type': 'Feature',
+                        'properties': {
+                            'name':'2',
+                            'description':
+                                '<strong>Welcoming Banner</strong><p>The location on the section after enter the school</p>'
+                        },
+                        'geometry': {
+                            'type': 'Point',
+                            'coordinates': [110.36160, -7.05968]
+                        }
+                    },
+                    {
+                        'type': 'Feature',
+                        'properties': {
+                            'name':'3',
+                            'description':
+                                '<strong>Fitness Area</strong><p>Boys students do some fitness every 4 pm until 5 pm</p>'
+                        },
+                        'geometry': {
+                            'type': 'Point',
+                            'coordinates': [110.36163, -7.06032]
+                        }
+                    },
+                    {
+                        'type': 'Feature',
+                        'properties': {
+                            'name':'4',
+                            'description':
+                                '<strong>Area Cuci Tangan</strong><p>Students must wash the hand on </p>'
+                        },
+                        'geometry': {
+                            'type': 'Point',
+                            'coordinates': [110.36189, -7.06020]
+                        }
+                    },
+                    {
+                        'type': 'Feature',
+                        'properties': {
+                            'name':'5',
+                            'description':
+                                "<strong>Area Kosong</strong><p>Jika area ini di pasang sebuah</p>"
+                        },
+                        'geometry': {
+                            'type': 'Point',
+                            'coordinates': [110.36280, -7.06008]
+                        }
+                    },
+                    {
+                        'type': 'Feature',
+                        'properties': {
+                            'name':'6',
+                            'description':
+                                '<strong>Girl Play Area</strong><p>Ada sebuah ayunan berbentuk lingkaran</p>'
+                        },
+                        'geometry': {
+                            'type': 'Point',
+                            'coordinates': [110.36280, -7.05971]
+                        }
+                    },
+                    {
+                        'type': 'Feature',
+                        'properties': {
+                            'name':'7',
+                            'description':
+                                '<strong>Tembok depan kelas 8B</strong><p>Akan dilukis</p>'
+                        },
+                        'geometry': {
+                            'type': 'Point',
+                            'coordinates': [110.36256, -7.05961]
+                        }
+                    },
+                    {
+                        'type': 'Feature',
+                        'properties': {
+                            'name':'8',
+                            'description':
+                                "<strong>Gazebo putri</strong><p>Meja Gazebo Putri</p>"
+                        },
+                        'geometry': {
+                            'type': 'Point',
+                            'coordinates': [110.36255, -7.05977]
+                        }
+                    },
+                    {
+                        'type': 'Feature',
+                        'properties': {
+                            'name':'9',
+                            'description':
+                                '<strong>Semesta Icon</strong><p>Graha Semesta</p>'
+                        },
+                        'geometry': {
+                            'type': 'Point',
+                            'coordinates': [110.36194, -7.05976]
+                        }
+                    }
+                ]
+            }
+        });
+        // Add a layer showing the places.
+        map.addLayer({
+            'id': 'places',
+            'type': 'circle',
+            'source': 'places',
+            'paint': {
+                'circle-color': '#4264fb',
+                'circle-radius': 10,
+                'circle-stroke-width': 2,
+                'circle-stroke-color': '#ffffff'
+            }
+        });
+
+        // Create a popup, but don't add it to the map yet.
+        const popup = new mapboxgl.Popup({
+            closeButton: false,
+            closeOnClick: false
+        });
+
+        
+        map.on('click','places',(e)=>{
+            // Change the cursor style as a UI indicator.
+            // Center the map on the coordinates of any clicked circle from the 'circle' layer.
+            map.flyTo({
+                center: e.features[0].geometry.coordinates});
+            openLeftMenu();
+            openRightMenu();
+            e.preventDefault();
+        })        
+
+        map.on('mouseenter', 'places', (e) => {
+            // Change the cursor style as a UI indicator.
+            map.getCanvas().style.cursor = 'pointer';
+
+            // Copy coordinates array.
+            const coordinates = e.features[0].geometry.coordinates.slice();
+            const description = e.features[0].properties.description;
+            const pname = e.features[0].properties.name;
+
+            // Ensure that if the map is zoomed out such that multiple
+            // copies of the feature are visible, the popup appears
+            // over the copy being pointed to.
+            while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
+                coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
+            }
+            
+
+            // Populate the popup and set its coordinates
+            // based on the feature found.
+            popup.setLngLat(coordinates).setHTML(description).addTo(map);
+            
+        });
+
+        map.on('click',(e)=>{
+            if (e.defaultPrevented === false) {
+                closeLeftMenu();
+                closeRightMenu();
+                popup.remove();
+            }
+                      
+        })
+
+        map.on('mouseleave', 'places', () => {
+            map.getCanvas().style.cursor = '';
+            
+        });
+    });
+
+    function openLeftMenu() {
+    document.getElementById("leftMenu").style.display = "block";
+    }
+
+    function closeLeftMenu() {
+    document.getElementById("leftMenu").style.display = "none";
+    }
+
+    function openRightMenu() {
+    document.getElementById("rightMenu").style.display = "block";
+    }
+
+    function closeRightMenu() {
+    document.getElementById("rightMenu").style.display = "none";
+    }
+        </script>
+    </body>
+</html>
